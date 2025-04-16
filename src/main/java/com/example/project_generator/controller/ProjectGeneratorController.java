@@ -29,6 +29,9 @@ public class ProjectGeneratorController {
     @Autowired
     private ProjectSocketContributors projectSocketContributors;
 
+    @Autowired
+    private DockerComposeContributor dockerComposeContributor;
+
     @PostMapping
     public String generateProject(@RequestBody CustomProjectRequest request) {
         // Convertir la requête en description
@@ -43,6 +46,7 @@ public class ProjectGeneratorController {
         // Générer Dockerfile si nécessaire
         if (description.isGenerateDocker()) {
             dockerFileContributors.generateDockerFile();
+            dockerComposeContributor.contribute(projectDirectory);
         }
 
         // Générer les manifestes Kubernetes si nécessaire

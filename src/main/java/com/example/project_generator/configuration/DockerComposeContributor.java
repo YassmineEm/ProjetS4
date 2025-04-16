@@ -1,10 +1,8 @@
 package com.example.project_generator.configuration;
 
-import com.example.project_generator.model.CustomProjectDescription;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
-import io.spring.initializr.generator.project.ProjectDescription;
 import io.spring.initializr.generator.project.contributor.ProjectContributor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,29 +16,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class DockerFileContributors implements ProjectContributor {
-
-    @Autowired
-    private ProjectDescription description;
+public class DockerComposeContributor implements ProjectContributor {
 
     @Autowired
     private Configuration freemarkerConfig;
 
     @Override
     public void contribute(Path projectRoot) throws IOException {
-        if (description instanceof CustomProjectDescription) {
-            CustomProjectDescription customDesc = (CustomProjectDescription) description;
-            if (customDesc.isGenerateDocker()) {
-                // Données pour le template
-                Map<String, Object> model = new HashMap<>();
-                model.put("artifactId", description.getArtifactId());
-                model.put("javaVersion", description.getJavaVersion());
+        Map<String, Object> model = new HashMap<>();
+        model.put("serviceName", "app");
+        model.put("port", 8080);
 
-                // Générer le Dockerfile
-                Path dockerfilePath = projectRoot.resolve("Dockerfile");
-                generateFromTemplate("Dockerfile.ftl", model, dockerfilePath);
-            }
-        }
+        Path composePath = projectRoot.resolve("docker-compose.yml");
+        generateFromTemplate("docker-compose.ftl", model, composePath);
     }
 
     private void generateFromTemplate(String templateName, Map<String, Object> model, Path outputPath) throws IOException {
@@ -48,7 +36,7 @@ public class DockerFileContributors implements ProjectContributor {
             Template template = freemarkerConfig.getTemplate(templateName);
             template.process(model, writer);
         } catch (TemplateException e) {
-            throw new IOException("Erreur lors du rendu du template FreeMarker : " + templateName, e);
+            throw new IOException("Erreur lors de la génération du template docker-compose", e);
         }
     }
 }

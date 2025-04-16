@@ -66,6 +66,11 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+           <groupId>org.freemarker</groupId>
+           <artifactId>freemarker</artifactId>
+           <version>2.3.32</version> <!-- ou la version la plus récente -->
+        </dependency>
 	</dependencies>
 
 	<dependencyManagement>
