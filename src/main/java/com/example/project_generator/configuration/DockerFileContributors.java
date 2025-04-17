@@ -34,7 +34,8 @@ public class DockerFileContributors implements ProjectContributor {
                 // Données pour le template
                 Map<String, Object> model = new HashMap<>();
                 model.put("artifactId", description.getArtifactId());
-                model.put("javaVersion", description.getJavaVersion());
+                model.put("javaVersion", customDesc.getJavaVersion());
+
 
                 // Générer le Dockerfile
                 Path dockerfilePath = projectRoot.resolve("Dockerfile");

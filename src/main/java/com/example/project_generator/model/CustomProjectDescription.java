@@ -1,28 +1,48 @@
 package com.example.project_generator.model;
 
 import io.spring.initializr.generator.project.ProjectDescription;
+import io.spring.initializr.generator.version.Version;
+import io.spring.initializr.generator.buildsystem.BuildSystem;
+import io.spring.initializr.generator.buildsystem.Dependency;
+import io.spring.initializr.generator.language.Language;
+import io.spring.initializr.generator.language.java.JavaVersion;
+import io.spring.initializr.generator.packaging.Packaging;
+
 import java.util.List;
+import java.util.Map;
 
 public class CustomProjectDescription implements ProjectDescription {
+
     private String architectureType;
     private boolean generateDocker;
     private boolean generateKubernetes;
     private boolean generateCLCG;
     private List<String> entities;
-    private String javaVersion = "17";
+    private Language language = Language.forId("java");
+    private String groupId = "com.example";
+    private JavaVersion javaVersion = JavaVersion.fromId("17");
     private String artifactId;
     private String name;
     private String packageName;
     private String version;
 
-    
+    @Override
+    public Language getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(Language language) {
+        this.language = language;
+    }
+
+    @Override
+    public String getBaseDirectory() {
+        return ".";
+    }
+
     @Override
     public String getArtifactId() {
         return artifactId;
-    }
-
-    public void setArtifactId(String artifactId) {
-        this.artifactId = artifactId;
     }
 
     @Override
@@ -30,17 +50,9 @@ public class CustomProjectDescription implements ProjectDescription {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     @Override
     public String getPackageName() {
         return packageName;
-    }
-
-    public void setPackageName(String packageName) {
-        this.packageName = packageName;
     }
 
     @Override
@@ -48,20 +60,52 @@ public class CustomProjectDescription implements ProjectDescription {
         return version;
     }
 
+    @Override
+    public JavaVersion getJavaVersion() {
+        return javaVersion;
+    }
+
+    @Override
+    public String getApplicationName() {
+        return name;
+    }
+
+    @Override
+    public String getDescription() {
+        return "Custom Project Description";
+    }
+
+    @Override
+    public String getGroupId() {
+        return groupId;
+    }
+
+    // Setters
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
+    public void setArtifactId(String artifactId) {
+        this.artifactId = artifactId;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
+    }
+
     public void setVersion(String version) {
         this.version = version;
     }
 
-    @Override
-    public String getJavaVersion() {
-        return javaVersion;
-    }
-
     public void setJavaVersion(String javaVersion) {
-        this.javaVersion = javaVersion;
+        this.javaVersion = JavaVersion.fromId(javaVersion);
     }
 
-    // Getters et Setters personnalisés
+    // Champs personnalisés
     public String getArchitectureType() {
         return architectureType;
     }
@@ -100,5 +144,25 @@ public class CustomProjectDescription implements ProjectDescription {
 
     public void setEntities(List<String> entities) {
         this.entities = entities;
+    }
+
+    @Override
+    public Map<String, Dependency> getRequestedDependencies() {
+        throw new UnsupportedOperationException("Unimplemented method 'getRequestedDependencies'");
+    }
+
+    @Override
+    public Version getPlatformVersion() {
+        throw new UnsupportedOperationException("Unimplemented method 'getPlatformVersion'");
+    }
+
+    @Override
+    public BuildSystem getBuildSystem() {
+        throw new UnsupportedOperationException("Unimplemented method 'getBuildSystem'");
+    }
+
+    @Override
+    public Packaging getPackaging() {
+        throw new UnsupportedOperationException("Unimplemented method 'getPackaging'");
     }
 }

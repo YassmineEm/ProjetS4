@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import java.nio.file.Path;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/generate")
@@ -38,7 +39,7 @@ public class ProjectGeneratorController {
     private DockerComposeContributor dockerComposeContributor;
 
     @PostMapping
-    public String generateProject(@RequestBody CustomProjectRequest request) {
+    public String generateProject(@RequestBody CustomProjectRequest request) throws IOException{
         CustomProjectDescription description = converter.convert(request);
         
         architectureContributors.configureArchitecture(description.getArchitectureType());
