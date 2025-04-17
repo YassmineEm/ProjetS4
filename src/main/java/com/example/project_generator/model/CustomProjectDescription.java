@@ -1,16 +1,67 @@
-package com.example.projectgenerator.model;
+package com.example.project_generator.model;
 
+import io.spring.initializr.generator.project.ProjectDescription;
 import java.util.List;
 
-public class CustomProjectDescription {
-
+public class CustomProjectDescription implements ProjectDescription {
     private String architectureType;
     private boolean generateDocker;
     private boolean generateKubernetes;
     private boolean generateCLCG;
     private List<String> entities;
+    private String javaVersion = "17";
+    private String artifactId;
+    private String name;
+    private String packageName;
+    private String version;
 
-    // Getters et Setters
+    
+    @Override
+    public String getArtifactId() {
+        return artifactId;
+    }
+
+    public void setArtifactId(String artifactId) {
+        this.artifactId = artifactId;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
+    }
+
+    @Override
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    @Override
+    public String getJavaVersion() {
+        return javaVersion;
+    }
+
+    public void setJavaVersion(String javaVersion) {
+        this.javaVersion = javaVersion;
+    }
+
+    // Getters et Setters personnalisés
     public String getArchitectureType() {
         return architectureType;
     }

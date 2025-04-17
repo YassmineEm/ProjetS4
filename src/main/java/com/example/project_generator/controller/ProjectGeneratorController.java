@@ -1,15 +1,20 @@
-package com.example.projectgenerator.controller;
+package com.example.project_generator.controller;
 
-import com.example.projectgenerator.model.CustomProjectRequest;
-import com.example.projectgenerator.model.CustomProjectDescription;
-import com.example.projectgenerator.converter.CustomProjectRequestToDescriptionConverter;
-import com.example.projectgenerator.contributors.*;
+import com.example.project_generator.model.CustomProjectRequest;
+import com.example.project_generator.model.CustomProjectDescription;
+import com.example.project_generator.converter.CustomProjectRequestToDescriptionConverter;
+import com.example.project_generator.configuration.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
+import java.nio.file.Path;
 
 @RestController
 @RequestMapping("/generate")
 public class ProjectGeneratorController {
+
+    @Value("${project.directory}")
+    private Path projectDirectory;
 
     @Autowired
     private CustomProjectRequestToDescriptionConverter converter;
@@ -34,27 +39,20 @@ public class ProjectGeneratorController {
 
     @PostMapping
     public String generateProject(@RequestBody CustomProjectRequest request) {
-        // Convertir la requête en description
         CustomProjectDescription description = converter.convert(request);
-
-        // Configurer l'architecture
+        
         architectureContributors.configureArchitecture(description.getArchitectureType());
-
-        // Configurer les sockets
         projectSocketContributors.configureSockets();
 
-        // Générer Dockerfile si nécessaire
         if (description.isGenerateDocker()) {
-            dockerFileContributors.generateDockerFile();
+            dockerFileContributors.contribute(projectDirectory);
             dockerComposeContributor.contribute(projectDirectory);
         }
 
-        // Générer les manifestes Kubernetes si nécessaire
         if (description.isGenerateKubernetes()) {
             subconnectManifestContributors.generateKubernetesManifests();
         }
 
-        // Configurer CI/CD si nécessaire
         if (description.isGenerateCLCG()) {
             cicrPluginInContributors.configureCI();
         }

@@ -1,4 +1,4 @@
-package com.example.projectgenerator.init;
+package com.example.project_generator.init;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,4 +1,4 @@
-package com.example.projectgenerator.configuration;
+package com.example.project_generator.configuration;
 
 import org.springframework.stereotype.Component;
 

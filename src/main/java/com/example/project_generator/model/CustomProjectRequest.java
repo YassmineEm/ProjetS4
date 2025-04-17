@@ -1,4 +1,4 @@
-package com.example.projectgenerator.model;
+package com.example.project_generator.model;
 
 import java.util.List;
 
