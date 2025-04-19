@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8?080:8?080"
+    volumes:
+      - .:/app
+    command: ["java", "-jar", "/app/target/

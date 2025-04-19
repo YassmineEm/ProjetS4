@@ -7,4 +7,4 @@ services:
       - "${port}:${port}"
     volumes:
       - .:/app
-    command: ["java", "-jar", "/app/target/${serviceName}.jar"]
+    command: ["java", "-jar", "/app/target/${artifactId}.jar"]

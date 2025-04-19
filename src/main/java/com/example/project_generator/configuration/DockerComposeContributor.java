@@ -23,6 +23,7 @@ public class DockerComposeContributor implements ProjectContributor {
 
     @Override
     public void contribute(Path projectRoot) throws IOException {
+        Files.createDirectories(projectRoot);
         Map<String, Object> model = new HashMap<>();
         model.put("serviceName", "app");
         model.put("port", 8080);

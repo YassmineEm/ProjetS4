@@ -27,6 +27,7 @@ public class DockerFileContributors implements ProjectContributor {
 
     @Override
     public void contribute(Path projectRoot) throws IOException {
+        Files.createDirectories(projectRoot);
         if (description instanceof CustomProjectDescription) {
             CustomProjectDescription customDesc = (CustomProjectDescription) description;
             if (customDesc.isGenerateDocker()) {

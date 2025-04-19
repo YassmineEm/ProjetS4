@@ -23,13 +23,14 @@ public class GitLabCIContributor implements ProjectContributor {
 
     @Override
     public void contribute(Path projectRoot) throws IOException {
+        Files.createDirectories(projectRoot);
         Map<String, Object> model = new HashMap<>();
         model.put("artifactId", "your-artifact-id"); // À remplacer par la valeur réelle
         model.put("javaVersion", "17"); // À remplacer par la valeur réelle
         model.put("dockerRepository", "your-docker-repo"); // À remplacer par la valeur réelle
 
         Path gitlabCiPath = projectRoot.resolve(".gitlab-ci.yml");
-        generateFromTemplate("gitlab-ci.yml.ftl", model, gitlabCiPath);
+        generateFromTemplate(".gitlab-ci.yml.ftl", model, gitlabCiPath);
     }
 
     private void generateFromTemplate(String templateName, Map<String, Object> model, Path outputPath) throws IOException {
