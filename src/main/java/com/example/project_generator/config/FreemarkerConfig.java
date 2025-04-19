@@ -17,6 +17,8 @@ public class FreemarkerConfig {
         cfg.setClassLoaderForTemplateLoading(getClass().getClassLoader(), "templates");
         cfg.setDefaultEncoding("UTF-8");
         cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+
+        cfg.setServletContextForTemplateLoading(null, "/");
         return cfg;
     }
 }
