@@ -5,6 +5,6 @@ services:
     build: .
     ports:
       - "${port}:${port}"
-    volumes:
-      - .:/app
-    command: ["java", "-jar", "/app/target/${artifactId}.jar"]
+    restart: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod

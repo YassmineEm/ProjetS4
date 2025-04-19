@@ -8,16 +8,16 @@ variables:
   DOCKER_DRIVER: overlay2
 
 before_script:
-  - echo "Using Java ${javaVersion}"
+  - echo "Using Java 17"
 
 build:
   stage: build
-  image: maven:3.8.6-openjdk-${javaVersion}
+  image: maven:3.8.6-openjdk-17
   script:
     - mvn $MAVEN_CLI_OPTS clean package -DskipTests
   artifacts:
     paths:
-      - target/${artifactId}.jar
+      - target/your-artifact-id.jar
 
 dockerize:
   stage: dockerize
@@ -25,10 +25,10 @@ dockerize:
   services:
     - docker:dind
   script:
-    - docker build -t ${dockerRepository}/${artifactId}:latest .
-    - docker push ${dockerRepository}/${artifactId}:latest
+    - docker build -t your-docker-repo/your-artifact-id:latest .
+    - docker push your-docker-repo/your-artifact-id:latest
 
 deploy:
   stage: deploy
   script:
-    - echo "Deploy step (Ã  personnaliser selon ton environnement)"
+    - echo "Deploy step (à personnaliser selon ton environnement)"
