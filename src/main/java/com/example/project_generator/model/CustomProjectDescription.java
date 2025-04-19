@@ -5,7 +5,7 @@ import io.spring.initializr.generator.version.Version;
 import io.spring.initializr.generator.buildsystem.BuildSystem;
 import io.spring.initializr.generator.buildsystem.Dependency;
 import io.spring.initializr.generator.language.Language;
-import io.spring.initializr.generator.language.java.JavaVersion;
+import io.spring.initializr.generator.language.java.JavaLanguage;
 import io.spring.initializr.generator.packaging.Packaging;
 
 import java.util.List;
@@ -18,9 +18,9 @@ public class CustomProjectDescription implements ProjectDescription {
     private boolean generateKubernetes;
     private boolean generateCLCG;
     private List<String> entities;
-    private Language language = Language.forId("java");
+    private Language language = new JavaLanguage();
     private String groupId = "com.example";
-    private JavaVersion javaVersion = JavaVersion.fromId("17");
+    private String javaVersion = "17";
     private String artifactId;
     private String name;
     private String packageName;
@@ -60,8 +60,7 @@ public class CustomProjectDescription implements ProjectDescription {
         return version;
     }
 
-    @Override
-    public JavaVersion getJavaVersion() {
+    public String getJavaVersion() {
         return javaVersion;
     }
 
@@ -102,7 +101,7 @@ public class CustomProjectDescription implements ProjectDescription {
     }
 
     public void setJavaVersion(String javaVersion) {
-        this.javaVersion = JavaVersion.fromId(javaVersion);
+        this.javaVersion = javaVersion;
     }
 
     // Champs personnalisés

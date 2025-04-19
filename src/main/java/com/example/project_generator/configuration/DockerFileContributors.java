@@ -4,7 +4,6 @@ import com.example.project_generator.model.CustomProjectDescription;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
-import io.spring.initializr.generator.project.ProjectDescription;
 import io.spring.initializr.generator.project.contributor.ProjectContributor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,7 +20,7 @@ import java.util.Map;
 public class DockerFileContributors implements ProjectContributor {
 
     @Autowired
-    private ProjectDescription description;
+    private CustomProjectDescription description;
 
     @Autowired
     private Configuration freemarkerConfig;
