@@ -13,6 +13,7 @@ public class CustomProjectRequestToDescriptionConverter {
         description.setGenerateKubernetes(request.isGenerateKubernetes());
         description.setGenerateCLCG(request.isGenerateCLCG());
         description.setEntities(request.getEntities());
+        description.setDockerRepository(request.getDockerRepository());
         return description;
     }
 }

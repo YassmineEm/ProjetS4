@@ -37,7 +37,10 @@ public class GitLabCIContributor implements ProjectContributor {
         Map<String, Object> model = new HashMap<>();
         model.put("artifactId", description.getArtifactId());
         model.put("javaVersion", description.getJavaVersion() != null ? description.getJavaVersion() : "17");
-        model.put("dockerRepository", dockerRepository);
+        model.put("dockerRepository", 
+            description.getDockerRepository() != null ? 
+            description.getDockerRepository() : 
+            "your-default-repo");
 
         Path gitlabCiPath = projectRoot.resolve(".gitlab-ci.yml");
         generateFromTemplate(".gitlab-ci.yml.ftl", model, gitlabCiPath);

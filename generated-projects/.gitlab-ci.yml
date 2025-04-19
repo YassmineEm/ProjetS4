@@ -25,4 +25,10 @@ dockerize:
   services:
     - docker:dind
   script:
-    - docker build -t 
+    - docker build -t your-default-repo/default-artifact:latest .
+    - docker push your-default-repo/default-artifact:latest
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploy step (à personnaliser selon ton environnement)"

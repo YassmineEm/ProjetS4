@@ -9,10 +9,19 @@ public class CustomProjectRequest {
     private boolean generateKubernetes;  // Générer Kubernetes ?
     private boolean generateCLCG;  // Générer le CLCG (CI/CD) ?
     private List<String> entities;  // Liste des entités (modèles) à générer
+    private String dockerRepository;
 
     // Getters et Setters
     public String getArchitectureType() {
         return architectureType;
+    }
+
+    public String getDockerRepository() {
+        return dockerRepository;
+    }
+
+    public void setDockerRepository(String dockerRepository) {
+        this.dockerRepository = dockerRepository;
     }
 
     public void setArchitectureType(String architectureType) {

@@ -25,8 +25,8 @@ dockerize:
   services:
     - docker:dind
   script:
-    - docker build -t ${dockerRepository}/${artifactId}:latest .
-    - docker push ${dockerRepository}/${artifactId}:latest
+    - docker build -t ${dockerRepository!"your-default-repo"}/${artifactId}:latest .
+    - docker push ${dockerRepository!"your-default-repo"}/${artifactId}:latest
 
 deploy:
   stage: deploy

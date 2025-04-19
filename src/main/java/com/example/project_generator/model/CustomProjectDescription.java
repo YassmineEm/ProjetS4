@@ -27,6 +27,7 @@ public class CustomProjectDescription implements ProjectDescription {
     private String version;
     private Integer port;
     private String profile;
+    private String dockerRepository;
 
     @Override
     public Language getLanguage() {
@@ -34,6 +35,14 @@ public class CustomProjectDescription implements ProjectDescription {
     }
     public Integer getPort() {
         return port;
+    }
+
+    public String getDockerRepository() {
+        return dockerRepository;
+    }
+
+    public void setDockerRepository(String dockerRepository) {
+        this.dockerRepository = dockerRepository;
     }
     
     public void setPort(Integer port) {
