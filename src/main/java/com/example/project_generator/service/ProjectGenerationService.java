@@ -31,6 +31,9 @@ public class ProjectGenerationService {
     @Autowired
     private CICRPluginInContributors cicrPluginInContributors;
 
+    @Autowired
+    private GitLabCIContributor gitLabCIContributor;
+
     public String generateProject(CustomProjectDescription description) {
         try {
             // 1. Configurer l'architecture
@@ -53,6 +56,7 @@ public class ProjectGenerationService {
             // 5. Configurer CI/CD si demandé
             if (description.isGenerateCLCG()) {
                 cicrPluginInContributors.configureCI();
+                gitLabCIContributor.contribute(projectDirectory);
             }
 
             return "Project generated successfully in directory: " + projectDirectory.toString();

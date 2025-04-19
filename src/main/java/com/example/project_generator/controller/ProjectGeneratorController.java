@@ -38,6 +38,9 @@ public class ProjectGeneratorController {
     @Autowired
     private DockerComposeContributor dockerComposeContributor;
 
+    @Autowired
+    private GitLabCIContributor gitLabCIContributor;
+
     @PostMapping
     public String generateProject(@RequestBody CustomProjectRequest request) throws IOException{
         CustomProjectDescription description = converter.convert(request);
@@ -56,6 +59,7 @@ public class ProjectGeneratorController {
 
         if (description.isGenerateCLCG()) {
             cicrPluginInContributors.configureCI();
+            gitLabCIContributor.contribute(projectDirectory);
         }
 
         return "Project generated successfully!";
