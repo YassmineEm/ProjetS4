@@ -25,10 +25,27 @@ public class CustomProjectDescription implements ProjectDescription {
     private String name;
     private String packageName;
     private String version;
+    private Integer port;
+    private String profile;
 
     @Override
     public Language getLanguage() {
         return language;
+    }
+    public Integer getPort() {
+        return port;
+    }
+    
+    public void setPort(Integer port) {
+        this.port = port;
+    }
+    
+    public String getProfile() {
+        return profile;
+    }
+
+    public void setProfile(String profile) {
+        this.profile = profile;
     }
 
     public void setLanguage(Language language) {

@@ -7,6 +7,8 @@ import io.spring.initializr.generator.project.contributor.ProjectContributor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.example.project_generator.model.CustomProjectDescription;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -21,12 +23,17 @@ public class DockerComposeContributor implements ProjectContributor {
     @Autowired
     private Configuration freemarkerConfig;
 
+    @Autowired
+    private CustomProjectDescription description;
+
     @Override
     public void contribute(Path projectRoot) throws IOException {
         Files.createDirectories(projectRoot);
         Map<String, Object> model = new HashMap<>();
         model.put("serviceName", "app");
-        model.put("port", 8080);
+        model.put("port", description.getPort() != null ? description.getPort() : 8080);
+        model.put("artifactId", description.getArtifactId());
+        model.put("profile", description.getProfile() != null ? description.getProfile() : "dev");
 
         Path composePath = projectRoot.resolve("docker-compose.yml");
         generateFromTemplate("docker-compose.ftl", model, composePath);

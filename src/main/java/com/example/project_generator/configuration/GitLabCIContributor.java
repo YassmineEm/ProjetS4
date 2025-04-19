@@ -7,6 +7,8 @@ import io.spring.initializr.generator.project.contributor.ProjectContributor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.example.project_generator.model.CustomProjectDescription;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -21,13 +23,21 @@ public class GitLabCIContributor implements ProjectContributor {
     @Autowired
     private Configuration freemarkerConfig;
 
+    @Autowired
+    private CustomProjectDescription description;
+
+    private String dockerRepository;
+
     @Override
     public void contribute(Path projectRoot) throws IOException {
+        if (description.getArtifactId() == null || description.getArtifactId().isEmpty()) {
+            throw new IllegalArgumentException("Artifact ID cannot be null or empty");
+        }
         Files.createDirectories(projectRoot);
         Map<String, Object> model = new HashMap<>();
-        model.put("artifactId", "your-artifact-id"); // À remplacer par la valeur réelle
-        model.put("javaVersion", "17"); // À remplacer par la valeur réelle
-        model.put("dockerRepository", "your-docker-repo"); // À remplacer par la valeur réelle
+        model.put("artifactId", description.getArtifactId());
+        model.put("javaVersion", description.getJavaVersion() != null ? description.getJavaVersion() : "17");
+        model.put("dockerRepository", dockerRepository);
 
         Path gitlabCiPath = projectRoot.resolve(".gitlab-ci.yml");
         generateFromTemplate(".gitlab-ci.yml.ftl", model, gitlabCiPath);

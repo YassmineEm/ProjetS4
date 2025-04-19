@@ -17,7 +17,7 @@ build:
     - mvn $MAVEN_CLI_OPTS clean package -DskipTests
   artifacts:
     paths:
-      - target/your-artifact-id.jar
+      - target/default-artifact.jar
 
 dockerize:
   stage: dockerize
@@ -25,10 +25,4 @@ dockerize:
   services:
     - docker:dind
   script:
-    - docker build -t your-docker-repo/your-artifact-id:latest .
-    - docker push your-docker-repo/your-artifact-id:latest
-
-deploy:
-  stage: deploy
-  script:
-    - echo "Deploy step (à personnaliser selon ton environnement)"
+    - docker build -t 
