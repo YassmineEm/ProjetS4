@@ -12,6 +12,7 @@ import com.example.project_generator.model.CustomProjectDescription;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -47,4 +48,19 @@ public class DockerComposeContributor implements ProjectContributor {
             throw new IOException("Erreur lors de la génération du template docker-compose", e);
         }
     }
+    public String generateContent() throws IOException {
+       Map<String, Object> model = new HashMap<>();
+       model.put("serviceName", "app");
+       model.put("port", description.getPort() != null ? description.getPort() : 8080);
+       model.put("artifactId", description.getArtifactId());
+       model.put("profile", description.getProfile() != null ? description.getProfile() : "dev");
+
+        try (StringWriter writer = new StringWriter()) {
+          Template template = freemarkerConfig.getTemplate("docker-compose.ftl");
+          template.process(model, writer);
+          return writer.toString();
+        } catch (TemplateException e) {
+          throw new IOException("Erreur lors de la génération du docker-compose.yml", e);
+        }
+   }
 }

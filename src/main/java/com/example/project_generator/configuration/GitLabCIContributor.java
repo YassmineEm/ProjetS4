@@ -12,6 +12,7 @@ import com.example.project_generator.model.CustomProjectDescription;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -52,6 +53,27 @@ public class GitLabCIContributor implements ProjectContributor {
             template.process(model, writer);
         } catch (TemplateException e) {
             throw new IOException("Erreur lors de la génération du template GitLab CI", e);
+        }
+    }
+    public String generateContent() throws IOException {
+        if (description.getArtifactId() == null || description.getArtifactId().isEmpty()) {
+           throw new IllegalArgumentException("Artifact ID cannot be null or empty");
+        }
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("artifactId", description.getArtifactId());
+        model.put("javaVersion", description.getJavaVersion() != null ? description.getJavaVersion() : "17");
+        model.put("dockerRepository", 
+           description.getDockerRepository() != null ? 
+           description.getDockerRepository() : 
+           "your-default-repo");
+
+        try (StringWriter writer = new StringWriter()) {
+          Template template = freemarkerConfig.getTemplate(".gitlab-ci.yml.ftl");
+          template.process(model, writer);
+          return writer.toString();
+        } catch (TemplateException e) {
+           throw new IOException("Erreur lors de la génération du .gitlab-ci.yml", e);
         }
     }
 }
