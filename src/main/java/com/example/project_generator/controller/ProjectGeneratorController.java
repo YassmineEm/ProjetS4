@@ -4,12 +4,15 @@ import com.example.project_generator.model.CustomProjectRequest;
 import com.example.project_generator.model.CustomProjectDescription;
 import com.example.project_generator.converter.CustomProjectRequestToDescriptionConverter;
 import com.example.project_generator.configuration.*;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.nio.file.Path;
 import java.io.*;
+import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -44,18 +47,22 @@ public class ProjectGeneratorController {
     @Autowired
     private GitLabCIContributor gitLabCIContributor;
 
+    @Autowired
+    private freemarker.template.Configuration freemarkerConfig; // ➔ Il te manquait l'injection ici
+
     @PostMapping
     public ResponseEntity<byte[]> generateProject(@RequestBody CustomProjectRequest request) throws IOException {
         CustomProjectDescription description = converter.convert(request);
 
+        // Mise à jour des descriptions
         dockerFileContributors.setDescription(description);
         dockerComposeContributor.setDescription(description);
         gitLabCIContributor.setDescription(description);
-        
+
         // Création du ZIP en mémoire
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try (ZipOutputStream zipOut = new ZipOutputStream(baos)) {
-            
+
             // Configuration de l'architecture et des sockets
             architectureContributors.configureArchitecture(description.getArchitectureType());
             projectSocketContributors.configureSockets();
@@ -90,7 +97,7 @@ public class ProjectGeneratorController {
     private void generateSpringBootBase(ZipOutputStream zipOut, CustomProjectDescription description) throws IOException {
         // Structure de base d'un projet Spring Boot
         addFileToZip(zipOut, "pom.xml", generatePomContent(description));
-        addFileToZip(zipOut, "src/main/java/com/example/" + description.getArtifactId() + "/Application.java", 
+        addFileToZip(zipOut, "src/main/java/com/example/" + description.getArtifactId() + "/Application.java",
             "package com.example." + description.getArtifactId() + ";\n\n" +
             "import org.springframework.boot.SpringApplication;\n" +
             "import org.springframework.boot.autoconfigure.SpringBootApplication;\n\n" +
@@ -100,7 +107,15 @@ public class ProjectGeneratorController {
             "        SpringApplication.run(Application.class, args);\n" +
             "    }\n" +
             "}");
+
         addFileToZip(zipOut, "src/main/resources/application.properties", "");
+
+        // Ajout des fichiers supplémentaires
+        addFileToZip(zipOut, "mvnw", generateTemplate("mvnw.ftl"));
+        addFileToZip(zipOut, "mvnw.cmd", generateTemplate("mvnw.cmd.ftl"));
+        addFileToZip(zipOut, ".gitignore", generateTemplate(".gitignore.ftl"));
+        addFileToZip(zipOut, ".gitattributes", generateTemplate(".gitattributes.ftl"));
+        addFileToZip(zipOut, "Help.md", generateTemplate("Help.md.ftl"));
     }
 
     private String generatePomContent(CustomProjectDescription description) {
@@ -128,11 +143,20 @@ public class ProjectGeneratorController {
                "</project>";
     }
 
-
     private void addFileToZip(ZipOutputStream zipOut, String filePath, String content) throws IOException {
         ZipEntry zipEntry = new ZipEntry(filePath);
         zipOut.putNextEntry(zipEntry);
         zipOut.write(content.getBytes());
         zipOut.closeEntry();
+    }
+
+    private String generateTemplate(String templateName) throws IOException {
+        try (StringWriter writer = new StringWriter()) {
+            Template template = freemarkerConfig.getTemplate(templateName);
+            template.process(new HashMap<>(), writer);
+            return writer.toString();
+        } catch (TemplateException e) {
+            throw new IOException("Erreur lors de la génération du template " + templateName, e);
+        }
     }
 }
