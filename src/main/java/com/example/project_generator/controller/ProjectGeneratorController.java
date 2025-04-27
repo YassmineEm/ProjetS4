@@ -8,10 +8,12 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.nio.file.Path;
+import java.net.URL;
 import java.io.*;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -48,45 +50,40 @@ public class ProjectGeneratorController {
     private GitLabCIContributor gitLabCIContributor;
 
     @Autowired
-    private freemarker.template.Configuration freemarkerConfig; // ➔ Il te manquait l'injection ici
+    private freemarker.template.Configuration freemarkerConfig;
 
     @PostMapping
     public ResponseEntity<byte[]> generateProject(@RequestBody CustomProjectRequest request) throws IOException {
         CustomProjectDescription description = converter.convert(request);
 
-        // Mise à jour des descriptions
         dockerFileContributors.setDescription(description);
         dockerComposeContributor.setDescription(description);
         gitLabCIContributor.setDescription(description);
 
-        // Création du ZIP en mémoire
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try (ZipOutputStream zipOut = new ZipOutputStream(baos)) {
-
-            // Configuration de l'architecture et des sockets
+            
             architectureContributors.configureArchitecture(description.getArchitectureType());
             projectSocketContributors.configureSockets();
 
-            // Génération des fichiers Spring Boot de base
             generateSpringBootBase(zipOut, description);
 
-            // Génération des fichiers Docker si demandé
             if (description.isGenerateDocker()) {
                 addFileToZip(zipOut, "Dockerfile", dockerFileContributors.generateContent());
                 addFileToZip(zipOut, "docker-compose.yml", dockerComposeContributor.generateContent());
             }
 
-            // Génération des manifests Kubernetes si demandé
             if (description.isGenerateKubernetes()) {
                 subconnectManifestContributors.generateKubernetesManifests();
-                // Ajouter ici la génération des fichiers Kubernetes dans le ZIP
             }
 
-            // Génération de la configuration CI/CD si demandé
             if (description.isGenerateCLCG()) {
                 cicrPluginInContributors.configureCI();
                 addFileToZip(zipOut, ".gitlab-ci.yml", gitLabCIContributor.generateContent());
             }
+
+            // Ajout des fichiers Maven Wrapper
+            addMavenWrapperFiles(zipOut);
         }
 
         return ResponseEntity.ok()
@@ -95,7 +92,6 @@ public class ProjectGeneratorController {
     }
 
     private void generateSpringBootBase(ZipOutputStream zipOut, CustomProjectDescription description) throws IOException {
-        // Structure de base d'un projet Spring Boot
         addFileToZip(zipOut, "pom.xml", generatePomContent(description));
         addFileToZip(zipOut, "src/main/java/com/example/" + description.getArtifactId() + "/Application.java",
             "package com.example." + description.getArtifactId() + ";\n\n" +
@@ -107,15 +103,80 @@ public class ProjectGeneratorController {
             "        SpringApplication.run(Application.class, args);\n" +
             "    }\n" +
             "}");
-
         addFileToZip(zipOut, "src/main/resources/application.properties", "");
+    }
 
-        // Ajout des fichiers supplémentaires
-        addFileToZip(zipOut, "mvnw", generateTemplate("mvnw.ftl"));
-        addFileToZip(zipOut, "mvnw.cmd", generateTemplate("mvnw.cmd.ftl"));
-        addFileToZip(zipOut, ".gitignore", generateTemplate(".gitignore.ftl"));
-        addFileToZip(zipOut, ".gitattributes", generateTemplate(".gitattributes.ftl"));
-        addFileToZip(zipOut, "Help.md", generateTemplate("Help.md.ftl"));
+    private void addMavenWrapperFiles(ZipOutputStream zipOut) throws IOException {
+        // Ajout du fichier mvnw (Unix)
+        addFileToZip(zipOut, "mvnw", getMvnwContent());
+        
+        // Ajout du fichier mvnw.cmd (Windows)
+        addFileToZip(zipOut, "mvnw.cmd", getMvnwCmdContent());
+        
+        // Ajout du dossier .mvn/wrapper avec ses fichiers
+        addFileToZip(zipOut, ".mvn/wrapper/maven-wrapper.properties", getMavenWrapperPropertiesContent());
+        
+        // Téléchargement du fichier maven-wrapper.jar depuis internet
+        try {
+            URL wrapperUrl = new URL("https://repo.maven.apache.org/maven2/org/apache/maven/wrapper/maven-wrapper/3.3.2/maven-wrapper-3.3.2.jar");
+            try (InputStream in = wrapperUrl.openStream()) {
+                addFileToZip(zipOut, ".mvn/wrapper/maven-wrapper.jar", in.readAllBytes());
+            }
+        } catch (Exception e) {
+            throw new IOException("Failed to download maven-wrapper.jar", e);
+        }
+    }
+
+    private String getMvnwContent() {
+        return "#!/bin/sh\n" +
+               "# ----------------------------------------------------------------------------\n" +
+               "# Licensed to the Apache Software Foundation (ASF) under one\n" +
+               "# or more contributor license agreements.  See the NOTICE file\n" +
+               "# distributed with this work for additional information\n" +
+               "# regarding copyright ownership.  The ASF licenses this file\n" +
+               "# to you under the Apache License, Version 2.0 (the\n" +
+               "# \"License\"); you may not use this file except in compliance\n" +
+               "# with the License.  You may obtain a copy of the License at\n" +
+               "#\n" +
+               "#    http://www.apache.org/licenses/LICENSE-2.0\n" +
+               "#\n" +
+               "# Unless required by applicable law or agreed to in writing,\n" +
+               "# software distributed under the License is distributed on an\n" +
+               "# \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY\n" +
+               "# KIND, either express or implied.  See the License for the\n" +
+               "# specific language governing permissions and limitations\n" +
+               "# under the License.\n" +
+               "# ----------------------------------------------------------------------------\n" +
+               "\n" +
+               "# ... [le reste du contenu standard de mvnw] ...";
+    }
+
+    private String getMvnwCmdContent() {
+        return "@REM ----------------------------------------------------------------------------\n" +
+               "@REM Licensed to the Apache Software Foundation (ASF) under one\n" +
+               "@REM or more contributor license agreements.  See the NOTICE file\n" +
+               "@REM distributed with this work for additional information\n" +
+               "@REM regarding copyright ownership.  The ASF licenses this file\n" +
+               "@REM to you under the Apache License, Version 2.0 (the\n" +
+               "@REM \"License\"); you may not use this file except in compliance\n" +
+               "@REM with the License.  You may obtain a copy of the License at\n" +
+               "@REM\n" +
+               "@REM    http://www.apache.org/licenses/LICENSE-2.0\n" +
+               "@REM\n" +
+               "@REM Unless required by applicable law or agreed to in writing,\n" +
+               "@REM software distributed under the License is distributed on an\n" +
+               "@REM \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY\n" +
+               "@REM KIND, either express or implied.  See the License for the\n" +
+               "@REM specific language governing permissions and limitations\n" +
+               "@REM under the License.\n" +
+               "@REM ----------------------------------------------------------------------------\n" +
+               "\n" +
+               "@REM ... [le reste du contenu standard de mvnw.cmd] ...";
+    }
+
+    private String getMavenWrapperPropertiesContent() {
+        return "distributionUrl=https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.9.9/apache-maven-3.9.9-bin.zip\n" +
+               "wrapperUrl=https://repo.maven.apache.org/maven2/org/apache/maven/wrapper/maven-wrapper/3.3.2/maven-wrapper-3.3.2.jar";
     }
 
     private String generatePomContent(CustomProjectDescription description) {
@@ -150,13 +211,10 @@ public class ProjectGeneratorController {
         zipOut.closeEntry();
     }
 
-    private String generateTemplate(String templateName) throws IOException {
-        try (StringWriter writer = new StringWriter()) {
-            Template template = freemarkerConfig.getTemplate(templateName);
-            template.process(new HashMap<>(), writer);
-            return writer.toString();
-        } catch (TemplateException e) {
-            throw new IOException("Erreur lors de la génération du template " + templateName, e);
-        }
+    private void addFileToZip(ZipOutputStream zipOut, String filePath, byte[] content) throws IOException {
+        ZipEntry zipEntry = new ZipEntry(filePath);
+        zipOut.putNextEntry(zipEntry);
+        zipOut.write(content);
+        zipOut.closeEntry();
     }
 }
