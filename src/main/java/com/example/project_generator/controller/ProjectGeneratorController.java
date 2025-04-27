@@ -47,6 +47,10 @@ public class ProjectGeneratorController {
     @PostMapping
     public ResponseEntity<byte[]> generateProject(@RequestBody CustomProjectRequest request) throws IOException {
         CustomProjectDescription description = converter.convert(request);
+
+        dockerFileContributors.setDescription(description);
+        dockerComposeContributor.setDescription(description);
+        gitLabCIContributor.setDescription(description);
         
         // Création du ZIP en mémoire
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

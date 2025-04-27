@@ -20,7 +20,7 @@ import java.util.Map;
 @Component
 public class DockerFileContributors implements ProjectContributor {
 
-    private final CustomProjectDescription description;
+    private  CustomProjectDescription description;
     private final Configuration freemarkerConfig;
 
     @Autowired
@@ -80,4 +80,9 @@ public class DockerFileContributors implements ProjectContributor {
             throw new IOException("Erreur lors de la génération du Dockerfile", e);
         }
     }
+    public void setDescription(CustomProjectDescription description) {
+        this.description = description;
+    }
+    
+    
 }

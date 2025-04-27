@@ -10,6 +10,51 @@ public class CustomProjectRequest {
     private boolean generateCLCG;  // Générer le CLCG (CI/CD) ?
     private List<String> entities;  // Liste des entités (modèles) à générer
     private String dockerRepository;
+    private String artifactId;
+    private String name;
+    private String javaVersion;
+    private Integer port;
+    private String profile;
+
+    public String getArtifactId() {
+        return artifactId;
+    }
+    
+    public void setArtifactId(String artifactId) {
+        this.artifactId = artifactId;
+    }
+    
+    public String getName() {
+        return name;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public String getJavaVersion() {
+        return javaVersion;
+    }
+    
+    public void setJavaVersion(String javaVersion) {
+        this.javaVersion = javaVersion;
+    }
+    
+    public Integer getPort() {
+        return port;
+    }
+    
+    public void setPort(Integer port) {
+        this.port = port;
+    }
+    
+    public String getProfile() {
+        return profile;
+    }
+    
+    public void setProfile(String profile) {
+        this.profile = profile;
+    }
 
     // Getters et Setters
     public String getArchitectureType() {

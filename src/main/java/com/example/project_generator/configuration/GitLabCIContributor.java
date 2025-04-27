@@ -76,4 +76,8 @@ public class GitLabCIContributor implements ProjectContributor {
            throw new IOException("Erreur lors de la génération du .gitlab-ci.yml", e);
         }
     }
+    public void setDescription(CustomProjectDescription description) {
+        this.description = description;
+    }
+    
 }

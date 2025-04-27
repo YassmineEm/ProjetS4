@@ -14,6 +14,11 @@ public class CustomProjectRequestToDescriptionConverter {
         description.setGenerateCLCG(request.isGenerateCLCG());
         description.setEntities(request.getEntities());
         description.setDockerRepository(request.getDockerRepository());
+        description.setArtifactId(request.getArtifactId());
+        description.setName(request.getName());
+        description.setJavaVersion(request.getJavaVersion());
+        description.setPort(request.getPort());
+        description.setProfile(request.getProfile());
         return description;
     }
 }

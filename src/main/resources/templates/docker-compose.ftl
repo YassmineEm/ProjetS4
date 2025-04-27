@@ -1,10 +1,9 @@
 version: '3.8'
-
 services:
-  ${serviceName}:
+  ${serviceName!"app"}:
     build: .
     ports:
-      - "${port}:${port}"
+      - "${port!"8080"}:${port!"8080"}"
     restart: always
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=${profile!"prod"}
