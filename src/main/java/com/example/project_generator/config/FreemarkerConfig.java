@@ -14,8 +14,6 @@ public class FreemarkerConfig {
     @Primary
     public freemarker.template.Configuration freemarkerConfiguration() throws IOException {
         freemarker.template.Configuration cfg = new freemarker.template.Configuration(freemarker.template.Configuration.VERSION_2_3_32);
-        
-        // Change this line to use classpath loading instead of servlet context
         cfg.setClassForTemplateLoading(this.getClass(), "/templates");
         
         cfg.setDefaultEncoding("UTF-8");

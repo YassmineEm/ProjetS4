@@ -63,6 +63,8 @@ public class ProjectGenerationService {
             // 3. Ajouter les dépendances
             addDependencies(description);
 
+            generateEntities(description);
+
             // 4. Configurer les sockets
             projectSocketContributors.configureSockets();
 
@@ -105,6 +107,25 @@ public class ProjectGenerationService {
                 generateMavenPom(description);
         }
     }
+
+
+    private void generateEntities(CustomProjectDescription description) throws IOException {
+        for (String entityName : description.getEntities()) {
+            Map<String, Object> model = new HashMap<>();
+            model.put("entityName", entityName);
+    
+            Path entityPath = projectDirectory.resolve("src/main/java/com/example/model/" + entityName + ".java");
+            Files.createDirectories(entityPath.getParent());
+    
+            try (BufferedWriter writer = Files.newBufferedWriter(entityPath)) {
+                Template template = freemarkerConfig.getTemplate("Entity.java.ftl");
+                template.process(model, writer);
+            } catch (TemplateException e) {
+                throw new IOException("Failed to generate entity: " + entityName, e);
+            }
+        }
+    }
+    
 
     private void generateMavenPom(CustomProjectDescription description) throws IOException {
         Map<String, Object> model = new HashMap<>();
