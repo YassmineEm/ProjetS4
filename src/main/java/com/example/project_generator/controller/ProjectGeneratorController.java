@@ -63,7 +63,7 @@ public class ProjectGeneratorController {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try (ZipOutputStream zipOut = new ZipOutputStream(baos)) {
             
-            architectureContributors.configureArchitecture(description.getArchitectureType());
+            architectureContributors.configureArchitecture(description.getArchitectureType(),projectDirectory);
             projectSocketContributors.configureSockets();
 
             generateSpringBootBase(zipOut, description);
