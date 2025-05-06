@@ -1,6 +1,7 @@
 package com.example.project_generator.model;
 
 import java.util.List;
+import java.util.Set;
 
 public class CustomProjectRequest {
 
@@ -15,6 +16,46 @@ public class CustomProjectRequest {
     private String javaVersion;
     private Integer port;
     private String profile;
+
+
+    private String buildTool;  // "maven", "gradle-groovy", "gradle-kotlin"
+    private String language;  // "java", "kotlin", "groovy"
+    private String springBootVersion;  // Version Spring Boot choisie
+    private Set<String> dependencies;  // Dependencies choisies
+
+
+
+    public String getBuildTool() {
+        return buildTool;
+    }
+    
+    public void setBuildTool(String buildTool) {
+        this.buildTool = buildTool;
+    }
+    
+    public String getLanguage() {
+        return language;
+    }
+    
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+    
+    public String getSpringBootVersion() {
+        return springBootVersion;
+    }
+    
+    public void setSpringBootVersion(String springBootVersion) {
+        this.springBootVersion = springBootVersion;
+    }
+    
+    public Set<String> getDependencies() {
+        return dependencies;
+    }
+    
+    public void setDependencies(Set<String> dependencies) {
+        this.dependencies = dependencies;
+    }
 
     public String getArtifactId() {
         return artifactId;

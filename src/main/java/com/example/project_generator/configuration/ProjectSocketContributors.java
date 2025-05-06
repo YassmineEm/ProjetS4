@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 public class ProjectSocketContributors {
 
     public void configureSockets() {
-        // Logique pour configurer les sockets
         System.out.println("Configuring project sockets...");
     }
 }

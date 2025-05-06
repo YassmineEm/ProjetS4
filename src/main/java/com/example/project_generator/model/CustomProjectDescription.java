@@ -10,6 +10,7 @@ import io.spring.initializr.generator.packaging.Packaging;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class CustomProjectDescription implements ProjectDescription {
 
@@ -28,6 +29,36 @@ public class CustomProjectDescription implements ProjectDescription {
     private Integer port;
     private String profile;
     private String dockerRepository;
+
+
+    private String buildTool;
+    private String springBootVersion;
+    private Set<String> dependencies;
+
+
+    public String getBuildTool() {
+        return buildTool;
+    }
+    
+    public void setBuildTool(String buildTool) {
+        this.buildTool = buildTool;
+    }
+
+    public String getSpringBootVersion() {
+        return springBootVersion;
+    }
+    
+    public void setSpringBootVersion(String springBootVersion) {
+        this.springBootVersion = springBootVersion;
+    }
+    
+    public Set<String> getDependencies() {
+        return dependencies;
+    }
+    
+    public void setDependencies(Set<String> dependencies) {
+        this.dependencies = dependencies;
+    }
 
     @Override
     public Language getLanguage() {

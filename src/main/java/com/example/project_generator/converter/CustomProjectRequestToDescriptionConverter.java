@@ -19,6 +19,9 @@ public class CustomProjectRequestToDescriptionConverter {
         description.setJavaVersion(request.getJavaVersion());
         description.setPort(request.getPort());
         description.setProfile(request.getProfile());
+        description.setBuildTool(request.getBuildTool());
+        description.setSpringBootVersion(request.getSpringBootVersion());
+        description.setDependencies(request.getDependencies());
         return description;
     }
 }
