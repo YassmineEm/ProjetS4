@@ -55,8 +55,8 @@ public class ProjectGenerationService {
 
     public String generateProject(CustomProjectDescription description) {
         try {
-            ProjectGenerationResult result = projectGenerationInvoker.invoke(description, metadataProvider.get());
-            Path projectRoot = result.getRootDirectory();
+            // 1. Génération Spring Initializr complète
+            Path projectRoot = projectGenerationInvoker.invoke(description);
 
 
             // 2. Architecture
