@@ -1,16 +1,18 @@
 package com.example.project_generator.model;
 
-import io.spring.initializr.generator.project.ProjectDescription;
-import io.spring.initializr.generator.version.Version;
-import io.spring.initializr.generator.buildsystem.BuildSystem;
-import io.spring.initializr.generator.buildsystem.Dependency;
+
 import io.spring.initializr.generator.language.Language;
 import io.spring.initializr.generator.language.java.JavaLanguage;
 import io.spring.initializr.generator.packaging.Packaging;
+import io.spring.initializr.generator.project.ProjectDescription;
+import io.spring.initializr.generator.version.Version;
+import io.spring.initializr.generator.buildsystem.gradle.GradleBuildSystem;
+import io.spring.initializr.generator.buildsystem.maven.MavenBuildSystem;
+import io.spring.initializr.generator.buildsystem.BuildSystem;
+import io.spring.initializr.generator.buildsystem.Dependency;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
+import java.util.*;
 
 public class CustomProjectDescription implements ProjectDescription {
 
@@ -19,44 +21,61 @@ public class CustomProjectDescription implements ProjectDescription {
     private boolean generateKubernetes;
     private boolean generateCLCG;
     private List<String> entities;
-    private Language language = new JavaLanguage();
-    private String groupId = "com.example";  // Valeur par défaut
-    private String javaVersion = "17";      // Valeur par défaut
+
+    private Language language = new JavaLanguage(); // Valeur par défaut : Java
+    private String groupId = "com.example";
     private String artifactId;
     private String name;
+    private String version = "0.0.1-SNAPSHOT";
     private String packageName;
-    private String version = "0.0.1-SNAPSHOT";  // Valeur par défaut
-    private Integer port = 8080;            // Valeur par défaut
-    private String profile = "dev";         // Valeur par défaut
-    private String dockerRepository = "your-default-repo";  // Valeur par défaut
 
-    private String buildTool = "maven";     // Valeur par défaut
-    private String springBootVersion;
-    private Set<String> dependencies;
+    private String javaVersion = "17";
+    private String profile = "dev";
+    private Integer port = 8080;
+    private String dockerRepository = "your-default-repo";
 
-    // Getters et Setters
-    public String getBuildTool() {
-        return buildTool;
+    private String buildTool = "maven"; // "maven", "gradle-groovy", "gradle-kotlin"
+    private String springBootVersion = "3.2.0";
+    private Set<String> dependencies = new HashSet<>();
+
+    // === Nouveaux ajouts obligatoires ===
+
+    @Override
+    public BuildSystem getBuildSystem() {
+        return switch (buildTool) {
+          case "gradle-groovy" -> new GradleBuildSystem();
+          case "gradle-kotlin" -> new GradleBuildSystem(GradleBuildSystem.DIALECT_KOTLIN);
+          case "maven"-> new MavenBuildSystem();
+          default -> new MavenBuildSystem();
+        };
     }
 
-    public void setBuildTool(String buildTool) {
-        this.buildTool = buildTool;
+    @Override
+    public Version getPlatformVersion() {
+        return Version.parse(springBootVersion);
     }
 
-    public String getSpringBootVersion() {
-        return springBootVersion;
+    @Override
+    public Map<String, Dependency> getRequestedDependencies() {
+      Map<String, Dependency> map = new HashMap<>();
+      if (dependencies != null) {
+        for (String id : dependencies) {
+            // Supposons que l'ID est au format "groupId:artifactId"
+            String[] parts = id.split(":");
+            if (parts.length == 2) {
+                map.put(id, Dependency.withCoordinates(parts[0], parts[1]).build());
+            } else {
+                // Gestion d'erreur si le format n'est pas bon
+                throw new IllegalArgumentException("Dependency ID must be in format 'groupId:artifactId'");
+            }
+        }
+     }
+      return map;
     }
 
-    public void setSpringBootVersion(String springBootVersion) {
-        this.springBootVersion = springBootVersion;
-    }
-
-    public Set<String> getDependencies() {
-        return dependencies;
-    }
-
-    public void setDependencies(Set<String> dependencies) {
-        this.dependencies = dependencies;
+    @Override
+    public Packaging getPackaging() {
+        return Packaging.forId("jar");
     }
 
     @Override
@@ -95,7 +114,7 @@ public class CustomProjectDescription implements ProjectDescription {
 
     @Override
     public String getName() {
-        return name;
+        return name != null ? name : artifactId;
     }
 
     public void setName(String name) {
@@ -131,18 +150,43 @@ public class CustomProjectDescription implements ProjectDescription {
     }
 
     public void setJavaVersion(String javaVersion) {
-        // Normalise la version (ex: "17" au lieu de "17.0.2")
-        this.javaVersion = javaVersion.split("\\.")[0];
+        this.javaVersion = javaVersion.split("\\.")[0]; // normaliser "17.0.1" -> "17"
     }
 
     @Override
     public String getApplicationName() {
-        return name != null ? name : artifactId;
+        return getName();
     }
 
     @Override
     public String getDescription() {
         return "Custom Project Description";
+    }
+
+    // === Champs personnalisés ===
+
+    public String getBuildTool() {
+        return buildTool;
+    }
+
+    public void setBuildTool(String buildTool) {
+        this.buildTool = buildTool;
+    }
+
+    public String getSpringBootVersion() {
+        return springBootVersion;
+    }
+
+    public void setSpringBootVersion(String springBootVersion) {
+        this.springBootVersion = springBootVersion;
+    }
+
+    public Set<String> getDependencies() {
+        return dependencies;
+    }
+
+    public void setDependencies(Set<String> dependencies) {
+        this.dependencies = dependencies;
     }
 
     public Integer getPort() {
@@ -207,25 +251,5 @@ public class CustomProjectDescription implements ProjectDescription {
 
     public void setEntities(List<String> entities) {
         this.entities = entities;
-    }
-
-    @Override
-    public Map<String, Dependency> getRequestedDependencies() {
-        throw new UnsupportedOperationException("Unimplemented method 'getRequestedDependencies'");
-    }
-
-    @Override
-    public Version getPlatformVersion() {
-        throw new UnsupportedOperationException("Unimplemented method 'getPlatformVersion'");
-    }
-
-    @Override
-    public BuildSystem getBuildSystem() {
-        throw new UnsupportedOperationException("Unimplemented method 'getBuildSystem'");
-    }
-
-    @Override
-    public Packaging getPackaging() {
-        throw new UnsupportedOperationException("Unimplemented method 'getPackaging'");
     }
 }

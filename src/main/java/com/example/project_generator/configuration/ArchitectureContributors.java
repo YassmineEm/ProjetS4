@@ -2,6 +2,7 @@ package com.example.project_generator.configuration;
 
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
+import com.example.project_generator.model.CustomProjectRequest;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -9,6 +10,13 @@ import java.nio.file.Path;
 
 @Component
 public class ArchitectureContributors {
+
+    private String groupId;  // Ajoutez une variable pour le groupId
+
+    @Autowired
+    public ArchitectureContributors(CustomProjectRequest projectRequest) {
+        this.groupId = projectRequest.getGroupId();  // Récupérer le groupId de la demande utilisateur
+    }
 
     public void configureArchitecture(String architectureType, Path projectRoot) throws IOException {
         System.out.println("Configuring architecture: " + architectureType);
@@ -21,8 +29,8 @@ public class ArchitectureContributors {
     }
 
     private void generateLayeredArchitecture(Path projectRoot) throws IOException {
-        String basePackage = projectRoot.getFileName().toString();
-        Path mainJavaPath = projectRoot.resolve("src/main/java/com/example/" + basePackage);
+        String basePackage = groupId.replace(".", "/");  // Utilisation dynamique du groupId
+        Path mainJavaPath = projectRoot.resolve("src/main/java/" + basePackage);
 
         createDirectories(mainJavaPath, "controller", "service", "repository", "model", "config");
 
@@ -32,8 +40,8 @@ public class ArchitectureContributors {
     }
 
     private void generateHexagonalArchitecture(Path projectRoot) throws IOException {
-        String basePackage = projectRoot.getFileName().toString();
-        Path mainJavaPath = projectRoot.resolve("src/main/java/com/example/" + basePackage);
+        String basePackage = groupId.replace(".", "/");  // Utilisation dynamique du groupId
+        Path mainJavaPath = projectRoot.resolve("src/main/java/" + basePackage);
 
         createDirectories(mainJavaPath, "application", "domain", "infrastructure", "interfaces", "config");
 
@@ -54,7 +62,7 @@ public class ArchitectureContributors {
 
         Path filePath = packagePath.resolve(className + ".java");
         if (!Files.exists(filePath)) {
-            String content = "package com.example." + basePath.getFileName() + "." + packageName + ";\n\n" +
+            String content = "package " + groupId + "." + packageName + ";\n\n" +  
                              "public class " + className + " {\n" +
                              "    // TODO: Implement " + className + " functionality\n" +
                              "}\n";
