@@ -30,8 +30,12 @@ public class CommandLineInterface implements CommandLineRunner {
         // Collecte des informations de base
         System.out.print("Nom du projet: ");
         request.setName(scanner.nextLine());
+
+        System.out.print("Group  (défaut: com.example): ");
+        String groupId = scanner.nextLine();
+        request.setGroupId(groupId.isEmpty() ? "com.example" : groupId);
         
-        System.out.print("Artifact ID: ");
+        System.out.print("Artifact : ");
         request.setArtifactId(scanner.nextLine());
         
         System.out.print("Version Java (défaut: 17): ");
@@ -66,7 +70,6 @@ public class CommandLineInterface implements CommandLineRunner {
         System.out.println("Type d'architecture (choisissez un numéro):");
         System.out.println("1. Hexagonale");
         System.out.println("2. En couches");
-        System.out.println("3. Microservices");
         System.out.print("Votre choix: ");
         int archChoice = Integer.parseInt(scanner.nextLine());
         request.setArchitectureType(switch(archChoice) {

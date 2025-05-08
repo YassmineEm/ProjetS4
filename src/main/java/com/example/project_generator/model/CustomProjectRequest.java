@@ -17,13 +17,21 @@ public class CustomProjectRequest {
     private Integer port;
     private String profile;
 
-
+    private String groupId;
     private String buildTool;  // "maven", "gradle-groovy", "gradle-kotlin"
     private String language;  // "java", "kotlin", "groovy"
     private String springBootVersion;  // Version Spring Boot choisie
     private Set<String> dependencies;  // Dependencies choisies
 
 
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
 
     public String getBuildTool() {
         return buildTool;

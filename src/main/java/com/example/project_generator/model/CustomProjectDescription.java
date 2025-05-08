@@ -20,26 +20,25 @@ public class CustomProjectDescription implements ProjectDescription {
     private boolean generateCLCG;
     private List<String> entities;
     private Language language = new JavaLanguage();
-    private String groupId = "com.example";
-    private String javaVersion = "17";
+    private String groupId = "com.example";  // Valeur par défaut
+    private String javaVersion = "17";      // Valeur par défaut
     private String artifactId;
     private String name;
     private String packageName;
-    private String version;
-    private Integer port;
-    private String profile;
-    private String dockerRepository;
+    private String version = "0.0.1-SNAPSHOT";  // Valeur par défaut
+    private Integer port = 8080;            // Valeur par défaut
+    private String profile = "dev";         // Valeur par défaut
+    private String dockerRepository = "your-default-repo";  // Valeur par défaut
 
-
-    private String buildTool;
+    private String buildTool = "maven";     // Valeur par défaut
     private String springBootVersion;
     private Set<String> dependencies;
 
-
+    // Getters et Setters
     public String getBuildTool() {
         return buildTool;
     }
-    
+
     public void setBuildTool(String buildTool) {
         this.buildTool = buildTool;
     }
@@ -47,15 +46,15 @@ public class CustomProjectDescription implements ProjectDescription {
     public String getSpringBootVersion() {
         return springBootVersion;
     }
-    
+
     public void setSpringBootVersion(String springBootVersion) {
         this.springBootVersion = springBootVersion;
     }
-    
+
     public Set<String> getDependencies() {
         return dependencies;
     }
-    
+
     public void setDependencies(Set<String> dependencies) {
         this.dependencies = dependencies;
     }
@@ -63,29 +62,6 @@ public class CustomProjectDescription implements ProjectDescription {
     @Override
     public Language getLanguage() {
         return language;
-    }
-    public Integer getPort() {
-        return port;
-    }
-
-    public String getDockerRepository() {
-        return dockerRepository;
-    }
-
-    public void setDockerRepository(String dockerRepository) {
-        this.dockerRepository = dockerRepository;
-    }
-    
-    public void setPort(Integer port) {
-        this.port = port;
-    }
-    
-    public String getProfile() {
-        return profile;
-    }
-
-    public void setProfile(String profile) {
-        this.profile = profile;
     }
 
     public void setLanguage(Language language) {
@@ -98,8 +74,23 @@ public class CustomProjectDescription implements ProjectDescription {
     }
 
     @Override
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+        updatePackageName();
+    }
+
+    @Override
     public String getArtifactId() {
         return artifactId;
+    }
+
+    public void setArtifactId(String artifactId) {
+        this.artifactId = artifactId;
+        updatePackageName();
     }
 
     @Override
@@ -107,9 +98,23 @@ public class CustomProjectDescription implements ProjectDescription {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     @Override
     public String getPackageName() {
         return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
+    }
+
+    private void updatePackageName() {
+        if (groupId != null && artifactId != null) {
+            this.packageName = groupId + "." + artifactId.toLowerCase();
+        }
     }
 
     @Override
@@ -117,13 +122,22 @@ public class CustomProjectDescription implements ProjectDescription {
         return version;
     }
 
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
     public String getJavaVersion() {
         return javaVersion;
     }
 
+    public void setJavaVersion(String javaVersion) {
+        // Normalise la version (ex: "17" au lieu de "17.0.2")
+        this.javaVersion = javaVersion.split("\\.")[0];
+    }
+
     @Override
     public String getApplicationName() {
-        return name;
+        return name != null ? name : artifactId;
     }
 
     @Override
@@ -131,37 +145,30 @@ public class CustomProjectDescription implements ProjectDescription {
         return "Custom Project Description";
     }
 
-    @Override
-    public String getGroupId() {
-        return groupId;
+    public Integer getPort() {
+        return port;
     }
 
-    // Setters
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
+    public void setPort(Integer port) {
+        this.port = port;
     }
 
-    public void setArtifactId(String artifactId) {
-        this.artifactId = artifactId;
+    public String getProfile() {
+        return profile;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setProfile(String profile) {
+        this.profile = profile;
     }
 
-    public void setPackageName(String packageName) {
-        this.packageName = packageName;
+    public String getDockerRepository() {
+        return dockerRepository;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
+    public void setDockerRepository(String dockerRepository) {
+        this.dockerRepository = dockerRepository;
     }
 
-    public void setJavaVersion(String javaVersion) {
-        this.javaVersion = javaVersion;
-    }
-
-    // Champs personnalisés
     public String getArchitectureType() {
         return architectureType;
     }

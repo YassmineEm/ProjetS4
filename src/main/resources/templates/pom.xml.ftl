@@ -10,9 +10,9 @@
         <relativePath/>
     </parent>
     
-    <groupId>com.example</groupId>
+    <groupId>${description.groupId}</groupId>
     <artifactId>${description.artifactId}</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>${description.version}</version>
     <name>${description.name}</name>
     
     <properties>

@@ -22,6 +22,7 @@ public class CustomProjectRequestToDescriptionConverter {
         description.setBuildTool(request.getBuildTool());
         description.setSpringBootVersion(request.getSpringBootVersion());
         description.setDependencies(request.getDependencies());
+        description.setGroupId(request.getGroupId() != null ? request.getGroupId() : "com.example");
         return description;
     }
 }

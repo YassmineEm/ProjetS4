@@ -114,7 +114,14 @@ public class ProjectGenerationService {
             Map<String, Object> model = new HashMap<>();
             model.put("entityName", entityName);
     
-            Path entityPath = projectDirectory.resolve("src/main/java/com/example/model/" + entityName + ".java");
+            // Convertir le groupId en chemin : ex. "com.example.myapp" -> "com/example/myapp"
+            String packagePath = description.getGroupId().replace(".", "/") + "/" + description.getArtifactId().toLowerCase() + "/model";
+    
+            // Générer le nom de package pour le fichier .java
+            String packageName = description.getGroupId() + "." + description.getArtifactId().toLowerCase() + ".model";
+            model.put("packageName", packageName);
+    
+            Path entityPath = projectDirectory.resolve("src/main/java/" + packagePath + "/" + entityName + ".java");
             Files.createDirectories(entityPath.getParent());
     
             try (BufferedWriter writer = Files.newBufferedWriter(entityPath)) {
@@ -124,9 +131,8 @@ public class ProjectGenerationService {
                 throw new IOException("Failed to generate entity: " + entityName, e);
             }
         }
-    }
+    }    
     
-
     private void generateMavenPom(CustomProjectDescription description) throws IOException {
         Map<String, Object> model = new HashMap<>();
         model.put("description", description);
