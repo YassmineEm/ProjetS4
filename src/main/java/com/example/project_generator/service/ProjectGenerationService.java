@@ -6,6 +6,8 @@ import com.example.project_generator.model.CustomProjectDescription;
 import io.spring.initializr.metadata.InitializrMetadataProvider;
 import io.spring.initializr.web.project.ProjectGenerationInvoker;
 import io.spring.initializr.web.project.ProjectGenerationResult;
+import io.spring.initializr.web.project.ProjectRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -55,8 +58,11 @@ public class ProjectGenerationService {
 
     public String generateProject(CustomProjectDescription description) {
         try {
-            // 1. Génération Spring Initializr complète
-            Path projectRoot = projectGenerationInvoker.invoke(description);
+            
+            ProjectRequest request = toProjectRequest(description);
+            ProjectGenerationResult result = projectGenerationInvoker.invokeProjectStructureGeneration(request);
+            Path projectRoot = result.getRootDirectory();
+
 
 
             // 2. Architecture
@@ -122,5 +128,21 @@ public class ProjectGenerationService {
             super(message, cause);
         }
     }
+
+    private ProjectRequest toProjectRequest(CustomProjectDescription description) {
+        ProjectRequest request = new ProjectRequest();
+        request.setType(description.getBuildTool().equals("maven") ? "maven-project" : "gradle-project");
+        request.setBootVersion(description.getSpringBootVersion());
+        request.setGroupId(description.getGroupId());
+        request.setArtifactId(description.getArtifactId());
+        request.setName(description.getName());
+        request.setDescription(description.getDescription());
+        request.setPackageName(description.getPackageName());
+        request.setJavaVersion(description.getJavaVersion());
+        request.setPackaging("jar");
+        request.setLanguage("java");
+        request.setDependencies(new ArrayList<>(description.getDependencies())); 
+      return request;
+}
 }
 
