@@ -24,10 +24,13 @@ public class DockerFileContributors implements ProjectContributor {
     private final Configuration freemarkerConfig;
 
     @Autowired
-    public DockerFileContributors(CustomProjectDescription description, 
-                                Configuration freemarkerConfig) {
-        this.description = description;
+    public DockerFileContributors(Configuration freemarkerConfig) {
         this.freemarkerConfig = freemarkerConfig;
+    }
+
+    @Autowired
+    public void setDescription(CustomProjectDescription description) {
+        this.description = description;
     }
 
     @Override
@@ -80,9 +83,4 @@ public class DockerFileContributors implements ProjectContributor {
             throw new IOException("Erreur lors de la génération du Dockerfile", e);
         }
     }
-    public void setDescription(CustomProjectDescription description) {
-        this.description = description;
-    }
-    
-    
 }

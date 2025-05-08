@@ -36,11 +36,21 @@ public class CommandLineInterface implements CommandLineRunner {
         request.setGroupId(groupId.isEmpty() ? "com.example" : groupId);
         
         System.out.print("Artifact : ");
-        request.setArtifactId(scanner.nextLine());
+        String artifactId = scanner.nextLine().trim(); 
+        if (artifactId.isEmpty()) {
+           System.err.println("Erreur : L'Artifact ID ne peut pas être vide");
+           return;
+        }
+        request.setArtifactId(artifactId);
         
         System.out.print("Version Java (défaut: 17): ");
         String javaVersion = scanner.nextLine();
         request.setJavaVersion(javaVersion.isEmpty() ? "17" : javaVersion);
+
+        System.out.print("Build tool (1. Maven, 2. Gradle) - défaut 1: ");
+        String buildToolChoice = scanner.nextLine();
+        request.setBuildTool(buildToolChoice.isEmpty() ? "maven" : 
+                    buildToolChoice.equals("2") ? "gradle" : "maven");
         
         System.out.print("Port (défaut: 8080): ");
         String portInput = scanner.nextLine();
@@ -75,7 +85,6 @@ public class CommandLineInterface implements CommandLineRunner {
         request.setArchitectureType(switch(archChoice) {
             case 1 -> "hexagonale";
             case 2 -> "en-couches";
-            case 3 -> "microservices";
             default -> "standard";
         });
 

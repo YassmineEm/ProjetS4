@@ -51,8 +51,13 @@ public class ProjectGenerationService {
     public String generateProject(CustomProjectDescription description) {
         try {
             // 1. Configurer l'architecture
-            architectureContributors.configureArchitecture(description.getArchitectureType(), projectDirectory);
-
+            architectureContributors.configureArchitecture(
+            description.getArchitectureType(), 
+            projectDirectory,
+            description.getGroupId()
+        );
+        System.out.println("Architecture: " + description.getArchitectureType());
+        System.out.println("Artificat: " + description.getArtifactId());
             // 2. Générer le fichier de build approprié
             generateBuildFile(description);
 

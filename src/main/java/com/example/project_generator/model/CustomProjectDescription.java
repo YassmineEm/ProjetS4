@@ -10,10 +10,11 @@ import io.spring.initializr.generator.buildsystem.gradle.GradleBuildSystem;
 import io.spring.initializr.generator.buildsystem.maven.MavenBuildSystem;
 import io.spring.initializr.generator.buildsystem.BuildSystem;
 import io.spring.initializr.generator.buildsystem.Dependency;
-
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+@Component
 public class CustomProjectDescription implements ProjectDescription {
 
     private String architectureType;
