@@ -12,27 +12,31 @@ import java.nio.file.Path;
 public class ArchitectureContributors {
 
 
-    public void configureArchitecture(String architectureType, Path projectRoot, String groupId) throws IOException {
+    public void configureArchitecture(String architectureType, Path projectRoot, String groupId , String artifactId) throws IOException {
         System.out.println("Configuring architecture: " + architectureType);
 
         switch (architectureType.toLowerCase()) {
-            case "en-couches" -> generateLayeredArchitecture(projectRoot, groupId);
+            case "en-couches" -> generateLayeredArchitecture(projectRoot, groupId, artifactId);
             case "hexagonal" -> generateHexagonalArchitecture(projectRoot, groupId);
             default -> generateDefaultArchitecture(projectRoot);
         }
     }
 
-    private void generateLayeredArchitecture(Path projectRoot, String groupId) throws IOException {
-        String basePackage = groupId.replace(".", "/");  // Utilisation dynamique du groupId
+    private void generateLayeredArchitecture(Path projectRoot, String groupId, String artifactId) throws IOException {
+        // Construire le chemin de base : groupId + artifactId
+        String basePackage = groupId.replace(".", "/") + "/" + artifactId.toLowerCase();
         Path mainJavaPath = projectRoot.resolve("src/main/java/" + basePackage);
-
-        createDirectories(mainJavaPath, "controller", "service", "repository", "model", "config");
-
-        generateBaseClass(mainJavaPath, "controller", "BaseController", groupId);
-        generateBaseClass(mainJavaPath, "service", "BaseService", groupId);
-        generateBaseClass(mainJavaPath, "repository", "BaseRepository", groupId);
+    
+        // Créer les sous-répertoires
+        createDirectories(mainJavaPath, "config", "controller", "model", "repository", "service");
+    
+        // Générer les classes de base avec le bon package
+        String basePackageName = groupId + "." + artifactId.toLowerCase();
+        generateBaseClass(mainJavaPath, "controller", "BaseController", basePackageName);
+        generateBaseClass(mainJavaPath, "service", "BaseService", basePackageName);
+        generateBaseClass(mainJavaPath, "repository", "BaseRepository", basePackageName);
     }
-
+    
     private void generateHexagonalArchitecture(Path projectRoot,String groupId) throws IOException {
         String basePackage = groupId.replace(".", "/");  // Utilisation dynamique du groupId
         Path mainJavaPath = projectRoot.resolve("src/main/java/" + basePackage);
@@ -50,13 +54,13 @@ public class ArchitectureContributors {
         System.out.println("No valid architecture selected, skipping structure generation.");
     }
 
-    private void generateBaseClass(Path basePath, String packageName, String className, String groupId) throws IOException {
+    private void generateBaseClass(Path basePath, String packageName, String className, String fullPackageName) throws IOException {
         Path packagePath = basePath.resolve(packageName);
         Files.createDirectories(packagePath);
-
+    
         Path filePath = packagePath.resolve(className + ".java");
         if (!Files.exists(filePath)) {
-            String content = "package " + groupId + "." + packageName + ";\n\n" +  
+            String content = "package " + fullPackageName + "." + packageName + ";\n\n" +  
                              "public class " + className + " {\n" +
                              "    // TODO: Implement " + className + " functionality\n" +
                              "}\n";

@@ -26,20 +26,22 @@ public class ProjectGeneratorController {
     @PostMapping
     public ResponseEntity<byte[]> generateProject(@RequestBody CustomProjectRequest request) throws IOException {
         CustomProjectDescription description = converter.convert(request);
-        
+    
         // Générer le projet via le service
         String projectPath = projectGenerationService.generateProject(description);
-        
+    
         // Créer un ZIP du projet généré
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try (ZipOutputStream zipOut = new ZipOutputStream(baos)) {
-            Path projectDir = Paths.get(projectPath);
-            addDirectoryToZip(zipOut, projectDir, projectDir);
+           Path projectDir = Paths.get(projectPath.replace(":", "")); // Supprimer les :
+           addDirectoryToZip(zipOut, projectDir, projectDir);
+        } catch (Exception e) {
+           throw new IOException("Failed to create ZIP file: " + e.getMessage());
         }
-        
+    
         return ResponseEntity.ok()
-                .header("Content-Disposition", "attachment; filename=" + description.getArtifactId() + ".zip")
-                .body(baos.toByteArray());
+            .header("Content-Disposition", "attachment; filename=" + description.getArtifactId() + ".zip")
+            .body(baos.toByteArray());
     }
 
     private void addDirectoryToZip(ZipOutputStream zipOut, Path rootPath, Path currentPath) throws IOException {

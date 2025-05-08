@@ -54,7 +54,8 @@ public class ProjectGenerationService {
             architectureContributors.configureArchitecture(
             description.getArchitectureType(), 
             projectDirectory,
-            description.getGroupId()
+            description.getGroupId(),
+            description.getArtifactId()
         );
         System.out.println("Architecture: " + description.getArchitectureType());
         System.out.println("Artificat: " + description.getArtifactId());
@@ -71,7 +72,9 @@ public class ProjectGenerationService {
 
             // 5. Générer les fichiers Docker si demandé
             if (description.isGenerateDocker()) {
+                dockerFileContributors.setDescription(description);
                 dockerFileContributors.contribute(projectDirectory);
+                dockerComposeContributor.setDescription(description);
                 dockerComposeContributor.contribute(projectDirectory);
             }
 
@@ -83,6 +86,7 @@ public class ProjectGenerationService {
             // 7. Configurer CI/CD si demandé
             if (description.isGenerateCLCG()) {
                 cicrPluginInContributors.configureCI();
+                gitLabCIContributor.setDescription(description);
                 gitLabCIContributor.contribute(projectDirectory);
             }
 

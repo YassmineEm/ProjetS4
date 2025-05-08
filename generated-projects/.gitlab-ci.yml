@@ -17,7 +17,7 @@ build:
     - mvn $MAVEN_CLI_OPTS clean package -DskipTests
   artifacts:
     paths:
-      - target/default-artifact.jar
+      - target/streaming.jar
 
 dockerize:
   stage: dockerize
@@ -25,8 +25,8 @@ dockerize:
   services:
     - docker:dind
   script:
-    - docker build -t your-default-repo/default-artifact:latest .
-    - docker push your-default-repo/default-artifact:latest
+    - docker build -t docker-repo/streaming:latest .
+    - docker push docker-repo/streaming:latest
 
 deploy:
   stage: deploy
