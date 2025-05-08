@@ -51,7 +51,7 @@ public class DockerComposeContributor implements ProjectContributor {
     public String generateContent() throws IOException {
        Map<String, Object> model = new HashMap<>();
        model.put("serviceName", "app");
-       model.put("port", description.getPort() != null ? String.valueOf(description.getPort()) : 8080);
+       model.put("port", description.getPort() != null ? Integer.toString(description.getPort()) : "8080");
        model.put("artifactId", description.getArtifactId());
        model.put("profile", description.getProfile() != null ? description.getProfile() : "dev");
 
