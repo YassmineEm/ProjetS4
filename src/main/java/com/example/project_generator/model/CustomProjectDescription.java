@@ -6,7 +6,6 @@ import io.spring.initializr.generator.language.java.JavaLanguage;
 import io.spring.initializr.generator.packaging.Packaging;
 import io.spring.initializr.generator.project.MutableProjectDescription;
 import io.spring.initializr.generator.version.Version;
-import io.spring.initializr.web.project.ProjectRequest;
 import io.spring.initializr.generator.buildsystem.gradle.GradleBuildSystem;
 import io.spring.initializr.generator.buildsystem.maven.MavenBuildSystem;
 import io.spring.initializr.generator.buildsystem.BuildSystem;
@@ -36,7 +35,7 @@ public class CustomProjectDescription extends MutableProjectDescription {
     private Integer port = 8080;
     private String dockerRepository = "your-default-repo";
 
-    private String buildTool = "maven"; // "maven", "gradle-groovy", "gradle-kotlin"
+    private String buildTool = "maven"; 
     private String springBootVersion = "3.2.0";
     private Set<String> dependencies = new HashSet<>();
 
